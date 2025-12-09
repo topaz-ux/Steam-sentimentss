@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Data files (생성된 데이터 파일)
+*.csv
+*.json
+*.xlsx
+*.xls
+game_reviews.csv
+test_reviews.csv
+
+# Images (생성된 시각화 파일)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Chrome driver
+chromedriver.exe
+chromedriver
+
+# Static files (Flask)
+static/images/
+
+# Empty directories
+Steam-sentiment/
+
