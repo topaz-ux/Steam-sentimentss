@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Steam 리뷰 감정 분석</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -565,17 +565,17 @@
     </div>
 
     <script>
-        // 게임 선택 함수
-        function selectGame(gameId, gameName) {
+        // 게임 선택 함수 (전역으로 정의)
+        window.selectGame = function(gameId, gameName) {
             document.getElementById('game_id').value = gameId;
             document.getElementById('game_name').value = gameName;
             document.getElementById('game_search').value = gameName;
         }
 
         // Enter 키 처리
-        function handleSearchKeyPress(event) {
+        window.handleSearchKeyPress = function(event) {
             if (event.key === 'Enter') {
-                searchGame();
+                window.searchGame();
             }
         }
 
@@ -586,22 +586,23 @@
             
             // 검색 결과 영역 표시
             resultsDiv.style.display = 'block';
-            resultsList.innerHTML = '<div class="search-loading">검색 중...</div>';
+            resultsList.innerHTML = '<div class="search-loading" style="padding: 20px; text-align: center; color: #667eea;">🔍 검색 중...</div>';
 
             try {
                 // Steam Store Search API URL
                 const searchUrl = `https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(searchTerm)}&l=korean&cc=KR`;
                 
-                // CORS 프록시 사용
+                // CORS 프록시 사용 (더 많은 옵션)
                 const proxies = [
-                    `https://api.allorigins.win/raw?url=`,
-                    `https://corsproxy.io/?`,
-                    `https://api.codetabs.com/v1/proxy?quest=`,
-                    `https://cors-anywhere.herokuapp.com/`,
-                    `https://thingproxy.freeboard.io/fetch/`
+                    { url: `https://api.allorigins.win/raw?url=`, type: 'allorigins' },
+                    { url: `https://corsproxy.io/?`, type: 'corsproxy' },
+                    { url: `https://api.codetabs.com/v1/proxy?quest=`, type: 'codetabs' },
+                    { url: `https://thingproxy.freeboard.io/fetch/`, type: 'thingproxy' },
+                    { url: `https://cors-anywhere.herokuapp.com/`, type: 'corsanywhere' }
                 ];
                 
                 let data = null;
+                let lastError = null;
                 
                 // 직접 호출 시도
                 try {
@@ -615,30 +616,69 @@
                     
                     if (response.ok) {
                         data = await response.json();
+                        console.log('직접 호출 성공');
                     }
                 } catch (e) {
                     console.log('직접 호출 실패, 프록시 시도:', e);
+                    lastError = e;
                 }
                 
                 // 프록시 사용
                 if (!data) {
                     for (const proxy of proxies) {
                         try {
-                            const proxyUrl = proxy + encodeURIComponent(searchUrl);
+                            let proxyUrl;
+                            if (proxy.type === 'allorigins') {
+                                proxyUrl = proxy.url + encodeURIComponent(searchUrl);
+                            } else {
+                                proxyUrl = proxy.url + encodeURIComponent(searchUrl);
+                            }
+                            
+                            console.log(`프록시 시도: ${proxy.type}`);
+                            // 타임아웃 설정
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 10000);
+                            
                             const response = await fetch(proxyUrl, {
                                 method: 'GET',
                                 headers: {
                                     'Accept': 'application/json',
-                                }
+                                },
+                                signal: controller.signal
                             });
                             
+                            clearTimeout(timeoutId);
+                            
                             if (response.ok) {
-                                const text = await response.text();
-                                data = JSON.parse(text);
-                                break;
+                                let text = await response.text();
+                                
+                                // allorigins.win은 JSON을 감싸는 경우가 있음
+                                if (proxy.type === 'allorigins') {
+                                    try {
+                                        const parsed = JSON.parse(text);
+                                        if (parsed.contents) {
+                                            text = parsed.contents;
+                                        }
+                                    } catch (e) {
+                                        // 이미 파싱된 경우
+                                    }
+                                }
+                                
+                                // JSON 파싱 시도
+                                try {
+                                    data = JSON.parse(text);
+                                    console.log(`프록시 ${proxy.type} 성공`);
+                                    break;
+                                } catch (parseError) {
+                                    console.log(`프록시 ${proxy.type} 응답 파싱 실패:`, parseError);
+                                    continue;
+                                }
+                            } else {
+                                console.log(`프록시 ${proxy.type} HTTP 오류: ${response.status}`);
                             }
                         } catch (e) {
-                            console.log(`프록시 ${proxy} 실패:`, e);
+                            console.log(`프록시 ${proxy.type} 실패:`, e.message || e);
+                            lastError = e;
                             continue;
                         }
                     }
@@ -646,12 +686,26 @@
                 
                 if (data && data.items && data.items.length > 0) {
                     displaySearchResults(data.items);
-                } else {
+                } else if (data && (!data.items || data.items.length === 0)) {
                     resultsList.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">검색 결과가 없습니다. 게임 ID를 직접 입력하거나 다른 검색어를 시도해보세요.</div>';
+                } else {
+                    resultsList.innerHTML = `
+                        <div style="padding: 20px; text-align: center; color: #e74c3c;">
+                            <p>검색 중 오류가 발생했습니다.</p>
+                            <p style="font-size: 0.9em; margin-top: 10px; color: #666;">게임 ID를 직접 입력하거나 나중에 다시 시도해주세요.</p>
+                            <p style="font-size: 0.8em; margin-top: 5px; color: #999;">오류: ${lastError ? lastError.message : '알 수 없는 오류'}</p>
+                        </div>
+                    `;
                 }
             } catch (error) {
                 console.error('검색 오류:', error);
-                resultsList.innerHTML = '<div style="padding: 20px; text-align: center; color: #e74c3c;">검색 중 오류가 발생했습니다. 게임 ID를 직접 입력하거나 나중에 다시 시도해주세요.</div>';
+                resultsList.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #e74c3c;">
+                        <p>검색 중 오류가 발생했습니다.</p>
+                        <p style="font-size: 0.9em; margin-top: 10px; color: #666;">게임 ID를 직접 입력하거나 나중에 다시 시도해주세요.</p>
+                        <p style="font-size: 0.8em; margin-top: 5px; color: #999;">오류: ${error.message || '알 수 없는 오류'}</p>
+                    </div>
+                `;
             }
         }
 
@@ -691,8 +745,8 @@
             }
         }
 
-        // 게임 검색 함수
-        async function searchGame() {
+        // 게임 검색 함수 (전역으로 정의)
+        window.searchGame = async function() {
             const searchTerm = document.getElementById('game_search').value.trim();
             if (!searchTerm) {
                 alert('게임 ID 또는 게임 이름을 입력하세요.');
@@ -702,12 +756,18 @@
             // 숫자만 입력된 경우 게임 ID로 간주
             if (/^\d+$/.test(searchTerm)) {
                 // 게임 ID로 직접 검색 (게임 정보 가져오기)
+                const resultsDiv = document.getElementById('search-results');
+                const resultsList = document.getElementById('search-results-list');
+                resultsDiv.style.display = 'block';
+                resultsList.innerHTML = '<div class="search-loading" style="padding: 20px; text-align: center; color: #667eea;">🔍 게임 정보 확인 중...</div>';
+                
                 try {
                     const gameInfoUrl = `https://store.steampowered.com/api/appdetails?appids=${searchTerm}&l=korean`;
                     const proxies = [
-                        `https://api.allorigins.win/raw?url=`,
-                        `https://corsproxy.io/?`,
-                        `https://api.codetabs.com/v1/proxy?quest=`
+                        { url: `https://api.allorigins.win/raw?url=`, type: 'allorigins' },
+                        { url: `https://corsproxy.io/?`, type: 'corsproxy' },
+                        { url: `https://api.codetabs.com/v1/proxy?quest=`, type: 'codetabs' },
+                        { url: `https://thingproxy.freeboard.io/fetch/`, type: 'thingproxy' }
                     ];
                     
                     let data = null;
@@ -721,23 +781,50 @@
                         });
                         if (response.ok) {
                             data = await response.json();
+                            console.log('게임 정보 직접 호출 성공');
                         }
                     } catch (e) {
-                        console.log('직접 호출 실패, 프록시 시도');
+                        console.log('게임 정보 직접 호출 실패, 프록시 시도');
                     }
                     
                     // 프록시 사용
                     if (!data) {
                         for (const proxy of proxies) {
                             try {
-                                const proxyUrl = proxy + encodeURIComponent(gameInfoUrl);
-                                const response = await fetch(proxyUrl);
+                                const proxyUrl = proxy.url + encodeURIComponent(gameInfoUrl);
+                                // 타임아웃 설정
+                                const controller = new AbortController();
+                                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                                
+                                const response = await fetch(proxyUrl, {
+                                    method: 'GET',
+                                    headers: { 'Accept': 'application/json' },
+                                    signal: controller.signal
+                                });
+                                
+                                clearTimeout(timeoutId);
+                                
                                 if (response.ok) {
-                                    const text = await response.text();
+                                    let text = await response.text();
+                                    
+                                    // allorigins.win 처리
+                                    if (proxy.type === 'allorigins') {
+                                        try {
+                                            const parsed = JSON.parse(text);
+                                            if (parsed.contents) {
+                                                text = parsed.contents;
+                                            }
+                                        } catch (e) {
+                                            // 이미 파싱된 경우
+                                        }
+                                    }
+                                    
                                     data = JSON.parse(text);
+                                    console.log(`게임 정보 프록시 ${proxy.type} 성공`);
                                     break;
                                 }
                             } catch (e) {
+                                console.log(`게임 정보 프록시 ${proxy.type} 실패:`, e.message || e);
                                 continue;
                             }
                         }
@@ -746,18 +833,21 @@
                     if (data && data[searchTerm] && data[searchTerm].success) {
                         const gameData = data[searchTerm].data;
                         selectGame(searchTerm, gameData.name || `Game ID: ${searchTerm}`);
-                        document.getElementById('search-results').style.display = 'none';
+                        resultsDiv.style.display = 'none';
                     } else {
                         // 게임 정보를 가져올 수 없으면 ID만 설정
                         document.getElementById('game_id').value = searchTerm;
                         document.getElementById('game_name').value = `Game ID: ${searchTerm}`;
-                        document.getElementById('search-results').style.display = 'none';
+                        resultsDiv.style.display = 'none';
+                        alert(`게임 ID ${searchTerm}로 설정했습니다. 게임 이름을 확인할 수 없었지만 분석은 진행할 수 있습니다.`);
                     }
                 } catch (error) {
+                    console.error('게임 정보 가져오기 오류:', error);
                     // 오류 발생 시 ID만 설정
                     document.getElementById('game_id').value = searchTerm;
                     document.getElementById('game_name').value = `Game ID: ${searchTerm}`;
-                    document.getElementById('search-results').style.display = 'none';
+                    resultsDiv.style.display = 'none';
+                    alert(`게임 정보를 가져올 수 없었지만 게임 ID ${searchTerm}로 설정했습니다. 분석은 진행할 수 있습니다.`);
                 }
             } else {
                 // 게임 이름으로 검색
@@ -995,9 +1085,22 @@
             const capsCount = (text.match(/[A-Z]{3,}/g) || []).length;
             score += (exclamationCount * 0.15) + (capsCount * 0.08) - (questionCount * 0.05);
             
-            // 이모지 확인
-            const positiveEmojis = (text.match(/[😀-😍😊😄😃😁]/g) || []).length;
-            const negativeEmojis = (text.match(/[😢-😡😞😟😠]/g) || []).length;
+            // 이모지 확인 (간단한 문자열 포함 확인)
+            let positiveEmojis = 0;
+            let negativeEmojis = 0;
+            const positiveEmojiList = ['😀', '😁', '😂', '😃', '😄', '😅', '😆', '😇', '😊', '😋', '😌', '😍', '😎', '😸', '😹', '😺', '😻', '😼', '😽'];
+            const negativeEmojiList = ['😢', '😣', '😤', '😥', '😦', '😧', '😨', '😩', '😪', '😫', '😬', '😭', '😮', '😯', '😰', '😱', '😲', '😳', '😴', '😵', '😶', '😷', '😞', '😟', '😠', '😡'];
+            
+            for (const emoji of positiveEmojiList) {
+                const matches = text.split(emoji).length - 1;
+                positiveEmojis += matches;
+            }
+            
+            for (const emoji of negativeEmojiList) {
+                const matches = text.split(emoji).length - 1;
+                negativeEmojis += matches;
+            }
+            
             score += (positiveEmojis * 0.2) - (negativeEmojis * 0.2);
             
             // 점수 정규화 (-1 ~ 1)
