@@ -47,6 +47,23 @@ jobs:
             env
             .vscode
             .idea
+            *.bat
+            *.sh
+            *.py
+            requirements.txt
+            test_project.py
+            finalcode.py
+            app.py
+            visualization.py
+            WebMining.ipynb
+            templates/
+            static/
+            .github/
+            install*
+            setup_*
+            START_*
+            INSTALL*
+            README*
       
       - name: Deploy to GitHub Pages
         id: deployment

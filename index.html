@@ -216,9 +216,15 @@
 
         .visualization-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .vis-card {
@@ -496,15 +502,39 @@
             </div>
             
             <div class="warning-box">
-                <strong>⚠️ CORS 제한:</strong> 일부 브라우저에서는 CORS 정책으로 인해 작동하지 않을 수 있습니다.<br><br>
-                <strong>해결 방법:</strong> 이 경우 로컬에서 <code>python app.py</code>를 실행하세요. 터미널에서 다음 명령어를 실행한 후 <code>http://localhost:5000</code>으로 접속하시면 됩니다.<br>
-                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd; font-size: 14px; line-height: 1.5;"><code>python app.py</code></pre>
+                <strong>⚠️ CORS 제한 문제 해결 가이드</strong><br><br>
+                <strong>문제:</strong> 일부 브라우저에서는 CORS 정책으로 인해 Steam API 호출이 차단될 수 있습니다.<br><br>
+                <strong>해결 방법 (단계별):</strong><br>
+                <ol style="margin: 10px 0; padding-left: 25px; line-height: 2;">
+                    <li><strong>Python 설치 확인:</strong> 터미널(또는 명령 프롬프트)에서 <code>python --version</code> 또는 <code>python3 --version</code>을 실행하여 Python이 설치되어 있는지 확인하세요.</li>
+                    <li><strong>필요한 패키지 설치:</strong> 프로젝트 폴더에서 다음 명령어를 실행하세요:
+                        <pre style="background: #fff; padding: 10px; border-radius: 5px; margin: 10px 0; overflow-x: auto; border: 1px solid #ddd; font-size: 13px;"><code>pip install -r requirements.txt</code></pre>
+                    </li>
+                    <li><strong>Flask 앱 실행:</strong> 프로젝트 폴더에서 다음 명령어를 실행하세요:
+                        <pre style="background: #fff; padding: 10px; border-radius: 5px; margin: 10px 0; overflow-x: auto; border: 1px solid #ddd; font-size: 13px;"><code>python app.py</code></pre>
+                    </li>
+                    <li><strong>브라우저에서 접속:</strong> 터미널에 "Running on http://127.0.0.1:5000" 메시지가 표시되면, 브라우저에서 <code>http://localhost:5000</code>으로 접속하세요.</li>
+                    <li><strong>사용:</strong> 이제 CORS 제한 없이 정상적으로 작동합니다!</li>
+                </ol>
             </div>
             
             <div class="warning-box">
-                <strong>📊 감정 분석:</strong> 현재 클라이언트 사이드에서 간단한 감정 분석 알고리즘을 사용합니다.<br><br>
-                <strong>더 정확한 분석:</strong> 더 정확한 분석을 원하시면 로컬 Flask 앱을 사용하세요. Flask 앱은 서버 사이드에서 NLTK VADER를 사용하여 더 정확한 감정 분석을 수행합니다.<br>
-                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd; font-size: 14px; line-height: 1.5;"><code>python app.py</code></pre>
+                <strong>📊 감정 분석 정확도 향상 가이드</strong><br><br>
+                <strong>현재 상태:</strong> 클라이언트 사이드에서 간단한 감정 분석 알고리즘을 사용합니다. (정확도: 보통)<br><br>
+                <strong>더 정확한 분석을 원하시나요? (단계별):</strong><br>
+                <ol style="margin: 10px 0; padding-left: 25px; line-height: 2;">
+                    <li><strong>NLTK 데이터 다운로드:</strong> Flask 앱을 처음 실행하면 자동으로 다운로드됩니다. 수동으로 다운로드하려면:
+                        <pre style="background: #fff; padding: 10px; border-radius: 5px; margin: 10px 0; overflow-x: auto; border: 1px solid #ddd; font-size: 13px;"><code>python -c "import nltk; nltk.download('vader_lexicon'); nltk.download('stopwords'); nltk.download('punkt')"</code></pre>
+                    </li>
+                    <li><strong>Flask 앱 실행:</strong> 위의 CORS 해결 가이드를 따라 Flask 앱을 실행하세요.</li>
+                    <li><strong>서버 사이드 분석 사용:</strong> Flask 앱은 서버 사이드에서 NLTK VADER를 사용하여 더 정확한 감정 분석을 수행합니다. (정확도: 높음)</li>
+                    <li><strong>차이점:</strong>
+                        <ul style="margin: 5px 0; padding-left: 20px;">
+                            <li>클라이언트 사이드: 간단한 키워드 기반 분석</li>
+                            <li>서버 사이드: NLTK VADER - 전문적인 감정 분석 라이브러리 사용</li>
+                        </ul>
+                    </li>
+                </ol>
             </div>
         </div>
     </div>
@@ -541,7 +571,9 @@
                 const proxies = [
                     `https://api.allorigins.win/raw?url=`,
                     `https://corsproxy.io/?`,
-                    `https://api.codetabs.com/v1/proxy?quest=`
+                    `https://api.codetabs.com/v1/proxy?quest=`,
+                    `https://cors-anywhere.herokuapp.com/`,
+                    `https://thingproxy.freeboard.io/fetch/`
                 ];
                 
                 let data = null;
@@ -731,7 +763,9 @@
                     const proxies = [
                         `https://api.allorigins.win/raw?url=`,
                         `https://corsproxy.io/?`,
-                        `https://api.codetabs.com/v1/proxy?quest=`
+                        `https://api.codetabs.com/v1/proxy?quest=`,
+                        `https://cors-anywhere.herokuapp.com/`,
+                        `https://thingproxy.freeboard.io/fetch/`
                     ];
                     
                     const url = `https://store.steampowered.com/appreviews/${gameId}?json=1&cursor=${encodeURIComponent(cursor)}&num_per_page=100&filter=all&language=all`;
