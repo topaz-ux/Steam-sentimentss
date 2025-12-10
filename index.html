@@ -41,6 +41,7 @@
             padding: 40px;
             width: 95%;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         h1 {
@@ -73,6 +74,9 @@
 
         .form-group {
             margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         label {
@@ -277,30 +281,60 @@
             display: block;
         }
 
-        .game-search {
-            display: block;
+        .search-container {
             width: 100%;
+            max-width: 100%;
+            display: block;
             margin-bottom: 15px;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
-        .game-search input {
+        .game-search-input {
             display: block;
             width: 100%;
+            max-width: 100%;
             padding: 20px;
             font-size: 18px;
             min-height: 60px;
             box-sizing: border-box;
-            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            margin: 0 0 15px 0;
+        }
+        
+        .game-search-input:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
-        .game-search button {
+        .game-search-button {
             display: block;
             width: 100%;
+            max-width: 100%;
             padding: 20px 30px;
             white-space: nowrap;
             font-size: 18px;
             min-height: 60px;
             box-sizing: border-box;
+            margin: 0;
+        }
+        
+        /* 모든 화면 크기에서 강제 적용 */
+        @media screen {
+            .search-container {
+                display: block !important;
+                flex-direction: unset !important;
+            }
+            
+            .game-search-input,
+            .game-search-button {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                float: none !important;
+            }
         }
 
         .popular-games {
@@ -408,9 +442,9 @@
             
             <div class="form-group">
                 <label for="game_search">게임 검색 (Steam 게임 ID 또는 게임 이름):</label>
-                <div class="game-search">
-                    <input type="text" id="game_search" placeholder="게임 ID 입력 (예: 730) 또는 게임 이름 검색" onkeypress="handleSearchKeyPress(event)">
-                    <button class="btn" onclick="searchGame()">검색</button>
+                <div class="search-container">
+                    <input type="text" id="game_search" class="game-search-input" placeholder="게임 ID 입력 (예: 730) 또는 게임 이름 검색" onkeypress="handleSearchKeyPress(event)">
+                    <button class="btn game-search-button" onclick="searchGame()">검색</button>
                 </div>
                 <div id="search-results" style="display: none; margin-top: 15px;">
                     <div style="background: white; border-radius: 10px; padding: 15px; max-height: 400px; overflow-y: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
