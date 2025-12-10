@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steam 리뷰 감정 분석 - 결과 리포트</title>
+    <title>Steam 리뷰 감정 분석</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         * {
@@ -17,11 +17,10 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-            color: #333;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -34,10 +33,6 @@
             text-align: center;
             margin-bottom: 10px;
             font-size: 2.5em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .subtitle {
@@ -48,7 +43,7 @@
         }
 
         .section {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             padding: 25px;
             background: #f8f9fa;
             border-radius: 15px;
@@ -58,23 +53,94 @@
         .section h2 {
             color: #333;
             margin-bottom: 20px;
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 1.5em;
         }
 
-        .section-number {
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2em;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
 
         .stats-grid {
@@ -86,96 +152,42 @@
 
         .stat-card {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .stat-card h3 {
             color: #667eea;
-            font-size: 2.5em;
+            font-size: 2em;
             margin-bottom: 10px;
         }
 
         .stat-card p {
             color: #666;
-            font-size: 1em;
-            font-weight: 600;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .data-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .data-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .data-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .sentiment-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 600;
             font-size: 0.9em;
         }
 
-        .sentiment-positive {
-            background: #d4edda;
-            color: #155724;
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
         }
 
-        .sentiment-negative {
-            background: #f8d7da;
-            color: #721c24;
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
         }
 
-        .sentiment-neutral {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .recommendation-yes {
-            color: #2ecc71;
-            font-weight: bold;
-        }
-
-        .recommendation-no {
-            color: #e74c3c;
-            font-weight: bold;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .visualization-grid {
@@ -198,15 +210,6 @@
             text-align: center;
         }
 
-        .word-cloud-placeholder {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 100px 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 1.2em;
-        }
-
         .info-box {
             background: #e7f3ff;
             border-left: 4px solid #2196F3;
@@ -219,361 +222,662 @@
             color: #1976D2;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
+        .game-search {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .game-search input {
+            flex: 1;
+        }
+
+        .game-search button {
+            padding: 12px 20px;
+            white-space: nowrap;
+        }
+
+        .popular-games {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .game-chip {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 2px solid #667eea;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .game-chip:hover {
+            background: #667eea;
             color: white;
-            font-weight: bold;
-            transition: width 0.5s;
+            transform: translateY(-2px);
         }
 
-        .progress-positive {
-            background: linear-gradient(90deg, #2ecc71, #27ae60);
+        .sentiment-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
         }
 
-        .progress-negative {
-            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        .sentiment-positive {
+            background: #d4edda;
+            color: #155724;
         }
 
-        .progress-neutral {
-            background: linear-gradient(90deg, #f39c12, #e67e22);
+        .sentiment-negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .sentiment-neutral {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 Steam 리뷰 감정 분석 결과 리포트</h1>
-        <p class="subtitle">Counter Strike 2 - 분석 결과 요약</p>
+        <h1>🎮 Steam 리뷰 감정 분석</h1>
+        <p class="subtitle">Steam 게임 리뷰를 스크래핑하고 감정 분석을 수행합니다</p>
 
-        <!-- 프로젝트 정보 -->
+        <!-- 게임 검색 섹션 -->
         <div class="section">
-            <h2>
-                <span class="section-number">📊</span>
-                프로젝트 개요
-            </h2>
+            <h2>1️⃣ 게임 검색 및 선택</h2>
             <div class="info-box">
-                <strong>분석 대상:</strong> Counter Strike 2 (Steam 게임 ID: 730)<br>
-                <strong>수집된 리뷰:</strong> 1,000개<br>
-                <strong>분석 일자:</strong> 2024년 12월<br>
-                <strong>분석 도구:</strong> NLTK VADER 감정 분석
+                <strong>💡 팁:</strong> Steam 스토어 페이지 URL에서 게임 ID를 확인할 수 있습니다.<br>
+                예: <code>https://store.steampowered.com/app/730/</code> → 게임 ID는 <strong>730</strong>
+            </div>
+            
+            <div class="form-group">
+                <label for="game_search">게임 검색 (Steam 게임 ID 또는 게임 이름):</label>
+                <div class="game-search">
+                    <input type="text" id="game_search" placeholder="게임 ID 입력 (예: 730) 또는 게임 이름 검색">
+                    <button class="btn" onclick="searchGame()">검색</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>인기 게임 (클릭하여 선택):</label>
+                <div class="popular-games">
+                    <div class="game-chip" onclick="selectGame('730', 'Counter Strike 2')">Counter Strike 2</div>
+                    <div class="game-chip" onclick="selectGame('271590', 'Grand Theft Auto V')">GTA V</div>
+                    <div class="game-chip" onclick="selectGame('1174180', 'Red Dead Redemption 2')">RDR2</div>
+                    <div class="game-chip" onclick="selectGame('1091500', 'Cyberpunk 2077')">Cyberpunk 2077</div>
+                    <div class="game-chip" onclick="selectGame('570', 'Dota 2')">Dota 2</div>
+                    <div class="game-chip" onclick="selectGame('440', 'Team Fortress 2')">Team Fortress 2</div>
+                    <div class="game-chip" onclick="selectGame('252490', 'Rust')">Rust</div>
+                    <div class="game-chip" onclick="selectGame('1245620', 'ELDEN RING')">ELDEN RING</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="game_id">Steam 게임 ID:</label>
+                <input type="text" id="game_id" value="730" placeholder="예: 730" readonly>
+            </div>
+            <div class="form-group">
+                <label for="game_name">게임 이름:</label>
+                <input type="text" id="game_name" value="Counter Strike 2" placeholder="게임 이름" readonly>
+            </div>
+            <div class="form-group">
+                <label for="num_reviews">수집할 리뷰 수:</label>
+                <input type="number" id="num_reviews" value="50" min="10" max="500">
+            </div>
+            <button class="btn" onclick="startAnalysis()">리뷰 분석 시작</button>
+            <div id="scrape-status" class="status"></div>
+            <div id="scrape-loading" class="loading">
+                <div class="spinner"></div>
+                <p>리뷰를 수집하고 분석하는 중입니다... 잠시만 기다려주세요.</p>
             </div>
         </div>
 
-        <!-- 주요 통계 -->
-        <div class="section">
-            <h2>
-                <span class="section-number">📈</span>
-                주요 통계
-            </h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>1,000</h3>
-                    <p>전체 리뷰</p>
-                </div>
-                <div class="stat-card">
-                    <h3>650</h3>
-                    <p>추천 리뷰 (65%)</p>
-                </div>
-                <div class="stat-card">
-                    <h3>350</h3>
-                    <p>비추천 리뷰 (35%)</p>
-                </div>
-                <div class="stat-card">
-                    <h3>0.342</h3>
-                    <p>평균 감정 점수</p>
-                </div>
-                <div class="stat-card">
-                    <h3>0.521</h3>
-                    <p>추천 리뷰 평균 점수</p>
-                </div>
-                <div class="stat-card">
-                    <h3>-0.089</h3>
-                    <p>비추천 리뷰 평균 점수</p>
-                </div>
+        <!-- 결과 섹션 (처음에는 숨김) -->
+        <div id="results-section" class="section" style="display: none;">
+            <h2>📊 분석 결과</h2>
+            <div id="stats-container">
+                <div class="stats-grid" id="stats-grid"></div>
             </div>
         </div>
 
-        <!-- 감정 분포 -->
-        <div class="section">
-            <h2>
-                <span class="section-number">😊</span>
-                감정 분포
-            </h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>520</h3>
-                    <p>긍정 리뷰 (52%)</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill progress-positive" style="width: 52%">52%</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <h3>280</h3>
-                    <p>부정 리뷰 (28%)</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill progress-negative" style="width: 28%">28%</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <h3>200</h3>
-                    <p>중립 리뷰 (20%)</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill progress-neutral" style="width: 20%">20%</div>
-                    </div>
-                </div>
-            </div>
+        <!-- 시각화 섹션 -->
+        <div id="visualization-section" class="section" style="display: none;">
+            <h2>📈 데이터 시각화</h2>
+            <div class="visualization-grid" id="visualization-grid"></div>
         </div>
 
-        <!-- 시각화 -->
-        <div class="section">
-            <h2>
-                <span class="section-number">📊</span>
-                데이터 시각화
-            </h2>
-            <div class="visualization-grid">
-                <div class="vis-card">
-                    <h4>추천 분포</h4>
-                    <div id="recommendation-chart" style="height: 300px;"></div>
-                </div>
-                <div class="vis-card">
-                    <h4>감정 레이블 분포</h4>
-                    <div id="sentiment-chart" style="height: 300px;"></div>
-                </div>
-                <div class="vis-card">
-                    <h4>감정 점수 분포 (파이 차트)</h4>
-                    <div id="pie-chart" style="height: 300px;"></div>
-                </div>
-                <div class="vis-card">
-                    <h4>추천 여부별 감정 점수</h4>
-                    <div id="boxplot-chart" style="height: 300px;"></div>
-                </div>
-            </div>
+        <!-- 샘플 데이터 섹션 -->
+        <div id="data-section" class="section" style="display: none;">
+            <h2>📋 리뷰 데이터 샘플</h2>
+            <div id="data-table-container"></div>
         </div>
 
-        <!-- 워드 클라우드 -->
+        <!-- 안내 섹션 -->
         <div class="section">
-            <h2>
-                <span class="section-number">☁️</span>
-                워드 클라우드 (상위 단어)
-            </h2>
-            <div class="word-cloud-placeholder">
-                <div style="font-size: 3em; margin-bottom: 20px;">game</div>
-                <div style="font-size: 2.5em; margin: 10px;">great, amazing, fun</div>
-                <div style="font-size: 2em; margin: 10px;">graphics, gameplay, smooth</div>
-                <div style="font-size: 1.8em; margin: 10px;">love, recommend, best</div>
-                <div style="font-size: 1.5em; margin: 10px;">bugs, lag, terrible, waste</div>
-                <p style="margin-top: 30px; font-size: 0.8em; opacity: 0.8;">
-                    실제 워드 클라우드는 리뷰 텍스트에서 자동 생성됩니다
-                </p>
-            </div>
-        </div>
-
-        <!-- 샘플 데이터 -->
-        <div class="section">
-            <h2>
-                <span class="section-number">📋</span>
-                샘플 리뷰 데이터
-            </h2>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>리뷰 텍스트</th>
-                        <th>추천</th>
-                        <th>감정</th>
-                        <th>감정 점수</th>
-                        <th>플레이 시간</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Great game! I love playing this with my friends. The graphics are amazing and the gameplay is smooth.</td>
-                        <td class="recommendation-yes">✓ 추천</td>
-                        <td><span class="sentiment-badge sentiment-positive">긍정</span></td>
-                        <td>0.847</td>
-                        <td>150.5시간</td>
-                    </tr>
-                    <tr>
-                        <td>This game is terrible. Too many bugs and the servers are always down. Waste of money.</td>
-                        <td class="recommendation-no">✗ 비추천</td>
-                        <td><span class="sentiment-badge sentiment-negative">부정</span></td>
-                        <td>-0.624</td>
-                        <td>5.2시간</td>
-                    </tr>
-                    <tr>
-                        <td>Decent game but needs more content. The mechanics are okay but gets boring after a while.</td>
-                        <td class="recommendation-yes">✓ 추천</td>
-                        <td><span class="sentiment-badge sentiment-neutral">중립</span></td>
-                        <td>0.102</td>
-                        <td>45.0시간</td>
-                    </tr>
-                    <tr>
-                        <td>Amazing experience! Best game I have played in years. Highly recommend to everyone.</td>
-                        <td class="recommendation-yes">✓ 추천</td>
-                        <td><span class="sentiment-badge sentiment-positive">긍정</span></td>
-                        <td>0.921</td>
-                        <td>300.0시간</td>
-                    </tr>
-                    <tr>
-                        <td>Not worth the price. The game is broken and the developers dont care about fixing it.</td>
-                        <td class="recommendation-no">✗ 비추천</td>
-                        <td><span class="sentiment-badge sentiment-negative">부정</span></td>
-                        <td>-0.756</td>
-                        <td>10.5시간</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- 분석 인사이트 -->
-        <div class="section">
-            <h2>
-                <span class="section-number">💡</span>
-                분석 인사이트
-            </h2>
-            <div class="info-box" style="margin-bottom: 15px;">
-                <strong>1. 전반적인 평가:</strong> 리뷰의 65%가 게임을 추천하며, 평균 감정 점수는 0.342로 긍정적입니다.
-            </div>
-            <div class="info-box" style="margin-bottom: 15px;">
-                <strong>2. 감정 분석 결과:</strong> 긍정 리뷰가 52%로 가장 많고, 부정 리뷰는 28%입니다.
-            </div>
-            <div class="info-box" style="margin-bottom: 15px;">
-                <strong>3. 추천 여부와 감정의 상관관계:</strong> 추천 리뷰의 평균 감정 점수(0.521)는 비추천 리뷰(-0.089)보다 훨씬 높습니다.
-            </div>
+            <h2>ℹ️ 사용 안내</h2>
             <div class="info-box">
-                <strong>4. 주요 키워드:</strong> "game", "great", "amazing", "fun", "graphics", "gameplay" 등이 자주 언급됩니다.
-            </div>
-        </div>
-
-        <!-- 생성된 파일 목록 -->
-        <div class="section">
-            <h2>
-                <span class="section-number">📁</span>
-                생성된 파일 목록
-            </h2>
-            <div style="background: white; padding: 20px; border-radius: 10px;">
-                <h3 style="margin-bottom: 15px; color: #333;">데이터 파일</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📄 game_reviews.csv - 수집된 리뷰 및 감정 분석 결과 (1,000개 리뷰)</li>
-                </ul>
-                
-                <h3 style="margin: 25px 0 15px 0; color: #333;">시각화 파일 (10개)</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 recommendation_distribution.png - 추천 분포 막대 그래프</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 sentiment_boxplot.png - 감정 점수 박스 플롯</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 sentiment_distribution.png - 감정 레이블 분포</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">☁️ wordcloud.png - 워드 클라우드</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 playtime_vs_sentiment.png - 플레이 시간 vs 감정 점수</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 sentiment_pie_chart.png - 감정 분포 파이 차트</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 review_length_distribution.png - 리뷰 길이 분포</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 sentiment_score_histogram.png - 감정 점수 히스토그램</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 playtime_distribution.png - 플레이 시간 분포</li>
-                    <li style="padding: 10px; border-bottom: 1px solid #eee;">📊 date_sentiment_trend.png - 날짜별 감정 추이</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 프로젝트 정보 -->
-        <div class="section">
-            <h2>
-                <span class="section-number">ℹ️</span>
-                프로젝트 정보
-            </h2>
-            <div class="info-box">
-                <strong>프로젝트 이름:</strong> Steam 리뷰 스크래핑 및 감정 분석<br>
-                <strong>기술 스택:</strong> Python, Selenium, NLTK, VADER, Pandas, Matplotlib, Flask<br>
-                <strong>주요 기능:</strong> 웹 스크래핑, 자연어 처리, 감정 분석, 데이터 시각화<br>
-                <strong>분석 방법:</strong> VADER 감정 분석기를 사용하여 리뷰의 긍정/부정/중립 감정을 분석
+                <strong>실제 서비스:</strong> 이 페이지는 실제 Steam API를 호출하여 리뷰를 가져옵니다.<br>
+                <strong>CORS 제한:</strong> 일부 브라우저에서는 CORS 정책으로 인해 작동하지 않을 수 있습니다. 이 경우 로컬에서 <code>python app.py</code>를 실행하세요.<br>
+                <strong>감정 분석:</strong> 클라이언트 사이드에서 간단한 감정 분석 알고리즘을 사용합니다. 더 정확한 분석을 원하시면 로컬 Flask 앱을 사용하세요.
             </div>
         </div>
     </div>
 
     <script>
-        // 추천 분포 차트
-        var recommendationData = [{
-            x: ['추천', '비추천'],
-            y: [650, 350],
-            type: 'bar',
-            marker: {
-                color: ['#2ecc71', '#e74c3c']
-            }
-        }];
-        
-        var recommendationLayout = {
-            title: '추천 분포',
-            xaxis: { title: '추천 여부' },
-            yaxis: { title: '리뷰 수' }
-        };
-        
-        Plotly.newPlot('recommendation-chart', recommendationData, recommendationLayout);
+        // 게임 선택 함수
+        function selectGame(gameId, gameName) {
+            document.getElementById('game_id').value = gameId;
+            document.getElementById('game_name').value = gameName;
+            document.getElementById('game_search').value = gameName;
+        }
 
-        // 감정 레이블 분포 차트
-        var sentimentData = [{
-            x: ['긍정', '부정', '중립'],
-            y: [520, 280, 200],
-            type: 'bar',
-            marker: {
-                color: ['#2ecc71', '#e74c3c', '#f39c12']
+        // 게임 검색 함수
+        function searchGame() {
+            const searchTerm = document.getElementById('game_search').value.trim();
+            if (!searchTerm) {
+                alert('게임 ID 또는 게임 이름을 입력하세요.');
+                return;
             }
-        }];
-        
-        var sentimentLayout = {
-            title: '감정 레이블 분포',
-            xaxis: { title: '감정 레이블' },
-            yaxis: { title: '리뷰 수' }
-        };
-        
-        Plotly.newPlot('sentiment-chart', sentimentData, sentimentLayout);
 
-        // 파이 차트
-        var pieData = [{
-            values: [520, 280, 200],
-            labels: ['긍정', '부정', '중립'],
-            type: 'pie',
-            marker: {
-                colors: ['#2ecc71', '#e74c3c', '#f39c12']
-            }
-        }];
-        
-        var pieLayout = {
-            title: '감정 분포 (파이 차트)'
-        };
-        
-        Plotly.newPlot('pie-chart', pieData, pieLayout);
+            // 숫자만 입력된 경우 게임 ID로 간주
+            if (/^\d+$/.test(searchTerm)) {
+                document.getElementById('game_id').value = searchTerm;
+                document.getElementById('game_name').value = `Game ID: ${searchTerm}`;
+            } else {
+                // 게임 이름 검색 (간단한 매칭)
+                const gameMap = {
+                    'counter strike': { id: '730', name: 'Counter Strike 2' },
+                    'cs': { id: '730', name: 'Counter Strike 2' },
+                    'cs2': { id: '730', name: 'Counter Strike 2' },
+                    'gta': { id: '271590', name: 'Grand Theft Auto V' },
+                    'gta5': { id: '271590', name: 'Grand Theft Auto V' },
+                    'rdr2': { id: '1174180', name: 'Red Dead Redemption 2' },
+                    'red dead': { id: '1174180', name: 'Red Dead Redemption 2' },
+                    'cyberpunk': { id: '1091500', name: 'Cyberpunk 2077' },
+                    'dota': { id: '570', name: 'Dota 2' },
+                    'rust': { id: '252490', name: 'Rust' }
+                };
 
-        // 박스 플롯
-        var boxData = [
-            {
-                y: Array.from({length: 650}, () => Math.random() * 0.6 + 0.2),
-                type: 'box',
-                name: '추천',
-                marker: { color: '#2ecc71' }
-            },
-            {
-                y: Array.from({length: 350}, () => Math.random() * 0.4 - 0.3),
-                type: 'box',
-                name: '비추천',
-                marker: { color: '#e74c3c' }
+                const searchLower = searchTerm.toLowerCase();
+                let found = false;
+                for (const [key, value] of Object.entries(gameMap)) {
+                    if (searchLower.includes(key)) {
+                        selectGame(value.id, value.name);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    alert(`게임을 찾을 수 없습니다. 게임 ID를 직접 입력하거나 인기 게임을 선택하세요.\n\n찾은 게임: ${searchTerm}\n게임 ID를 알고 있다면 직접 입력하세요.`);
+                }
             }
-        ];
-        
-        var boxLayout = {
-            title: '추천 여부별 감정 점수 분포',
-            yaxis: { title: 'Compound Score' }
-        };
-        
-        Plotly.newPlot('boxplot-chart', boxData, boxLayout);
+        }
+
+        // Steam API에서 리뷰 가져오기
+        async function fetchSteamReviews(gameId, numReviews) {
+            const reviews = [];
+            let cursor = '*';
+            const maxPages = Math.ceil(numReviews / 100) + 1;
+            
+            for (let page = 0; page < maxPages && reviews.length < numReviews; page++) {
+                try {
+                    // CORS 프록시 사용 (여러 옵션 시도)
+                    const proxies = [
+                        `https://api.allorigins.win/raw?url=`,
+                        `https://corsproxy.io/?`,
+                        `https://api.codetabs.com/v1/proxy?quest=`
+                    ];
+                    
+                    const url = `https://store.steampowered.com/appreviews/${gameId}?json=1&cursor=${encodeURIComponent(cursor)}&num_per_page=100&filter=all&language=all`;
+                    
+                    let response = null;
+                    let data = null;
+                    
+                    // 직접 호출 시도
+                    try {
+                        response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                            mode: 'cors'
+                        });
+                        
+                        if (response.ok) {
+                            data = await response.json();
+                        }
+                    } catch (e) {
+                        console.log('직접 호출 실패, 프록시 시도:', e);
+                    }
+                    
+                    // 프록시 사용
+                    if (!data) {
+                        for (const proxy of proxies) {
+                            try {
+                                const proxyUrl = proxy + encodeURIComponent(url);
+                                response = await fetch(proxyUrl, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Accept': 'application/json',
+                                    }
+                                });
+                                
+                                if (response.ok) {
+                                    const text = await response.text();
+                                    data = JSON.parse(text);
+                                    break;
+                                }
+                            } catch (e) {
+                                console.log(`프록시 ${proxy} 실패:`, e);
+                                continue;
+                            }
+                        }
+                    }
+                    
+                    if (data && data.reviews && data.reviews.length > 0) {
+                        for (const review of data.reviews) {
+                            if (reviews.length >= numReviews) break;
+                            
+                            const reviewText = review.review || '';
+                            if (reviewText.trim().length > 0) {
+                                const sentiment = analyzeSentiment(reviewText);
+                                reviews.push({
+                                    text: reviewText,
+                                    recommended: review.voted_up || false,
+                                    playtime: (review.author && review.author.playtime_at_review) ? 
+                                             (review.author.playtime_at_review / 60).toFixed(1) : 0,
+                                    date: review.timestamp_created ? 
+                                         new Date(review.timestamp_created * 1000).toISOString().split('T')[0] : '',
+                                    sentiment: sentiment.label,
+                                    score: sentiment.score
+                                });
+                            }
+                        }
+                        
+                        cursor = data.cursor || '*';
+                        if (!cursor || cursor === '*' || cursor === data.cursor) {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                    
+                    // API 호출 제한을 위한 대기
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                } catch (error) {
+                    console.error(`페이지 ${page + 1} 오류:`, error);
+                    break;
+                }
+            }
+            
+            return reviews;
+        }
+
+        // 간단한 감정 분석 (VADER 기반 간단 버전)
+        function analyzeSentiment(text) {
+            const positiveWords = ['great', 'amazing', 'excellent', 'wonderful', 'fantastic', 'love', 'best', 'good', 'awesome', 'perfect', 'fun', 'enjoy', 'recommend', 'brilliant', 'outstanding'];
+            const negativeWords = ['terrible', 'awful', 'horrible', 'bad', 'worst', 'hate', 'disappoint', 'boring', 'broken', 'bug', 'waste', 'poor', 'trash', 'garbage', 'unplayable'];
+            const intensifiers = ['very', 'extremely', 'really', 'absolutely', 'incredibly', 'totally'];
+            
+            const lowerText = text.toLowerCase();
+            let score = 0;
+            
+            // 긍정 단어 체크
+            positiveWords.forEach(word => {
+                const regex = new RegExp(`\\b${word}\\w*\\b`, 'gi');
+                const matches = lowerText.match(regex);
+                if (matches) {
+                    let wordScore = 0.5;
+                    // 강조어 확인
+                    const beforeWord = lowerText.substring(Math.max(0, lowerText.indexOf(word) - 20), lowerText.indexOf(word));
+                    if (intensifiers.some(i => beforeWord.includes(i))) {
+                        wordScore = 0.8;
+                    }
+                    // 부정어 확인
+                    if (/\b(not|no|never|don't|doesn't|isn't|aren't)\b/.test(beforeWord)) {
+                        wordScore = -0.3;
+                    }
+                    score += wordScore * matches.length;
+                }
+            });
+            
+            // 부정 단어 체크
+            negativeWords.forEach(word => {
+                const regex = new RegExp(`\\b${word}\\w*\\b`, 'gi');
+                const matches = lowerText.match(regex);
+                if (matches) {
+                    let wordScore = -0.5;
+                    // 강조어 확인
+                    const beforeWord = lowerText.substring(Math.max(0, lowerText.indexOf(word) - 20), lowerText.indexOf(word));
+                    if (intensifiers.some(i => beforeWord.includes(i))) {
+                        wordScore = -0.8;
+                    }
+                    // 부정어 확인 (이중 부정 = 긍정)
+                    if (/\b(not|no|never|don't|doesn't|isn't|aren't)\b/.test(beforeWord)) {
+                        wordScore = 0.3;
+                    }
+                    score += wordScore * matches.length;
+                }
+            });
+            
+            // 감탄표와 대문자 확인
+            const exclamationCount = (text.match(/!/g) || []).length;
+            const capsCount = (text.match(/[A-Z]{2,}/g) || []).length;
+            score += (exclamationCount * 0.1) + (capsCount * 0.05);
+            
+            // 점수 정규화 (-1 ~ 1)
+            score = Math.max(-1, Math.min(1, score / 5));
+            
+            // 레이블 결정
+            let label = 'neutral';
+            if (score > 0.1) label = 'positive';
+            else if (score < -0.1) label = 'negative';
+            
+            return { score, label };
+        }
+
+        // 분석 시작 함수
+        async function startAnalysis() {
+            const gameId = document.getElementById('game_id').value;
+            const gameName = document.getElementById('game_name').value;
+            const numReviews = parseInt(document.getElementById('num_reviews').value) || 50;
+
+            if (!gameId) {
+                alert('게임 ID를 입력하세요.');
+                return;
+            }
+
+            const statusDiv = document.getElementById('scrape-status');
+            const loadingDiv = document.getElementById('scrape-loading');
+            const resultsSection = document.getElementById('results-section');
+            const visualizationSection = document.getElementById('visualization-section');
+            const dataSection = document.getElementById('data-section');
+
+            // 로딩 표시
+            loadingDiv.style.display = 'block';
+            statusDiv.style.display = 'none';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = `Steam API에서 리뷰를 가져오는 중...`;
+            statusDiv.style.display = 'block';
+            resultsSection.style.display = 'none';
+            visualizationSection.style.display = 'none';
+            dataSection.style.display = 'none';
+
+            try {
+                // 실제 Steam API에서 리뷰 가져오기
+                const reviews = await fetchSteamReviews(gameId, numReviews);
+                
+                if (reviews.length === 0) {
+                    throw new Error('리뷰를 가져올 수 없습니다. 게임 ID를 확인하거나 나중에 다시 시도해주세요.');
+                }
+                
+                // 통계 계산
+                const recommended = reviews.filter(r => r.recommended).length;
+                const positive = reviews.filter(r => r.sentiment === 'positive').length;
+                const negative = reviews.filter(r => r.sentiment === 'negative').length;
+                const neutral = reviews.filter(r => r.sentiment === 'neutral').length;
+                const avgScore = reviews.reduce((sum, r) => sum + r.score, 0) / reviews.length;
+                const recommendedAvg = reviews.filter(r => r.recommended).length > 0 ?
+                    reviews.filter(r => r.recommended).reduce((sum, r) => sum + r.score, 0) / recommended : 0;
+                const notRecommendedAvg = reviews.filter(r => !r.recommended).length > 0 ?
+                    reviews.filter(r => !r.recommended).reduce((sum, r) => sum + r.score, 0) / (reviews.length - recommended) : 0;
+                
+                const data = {
+                    gameName,
+                    totalReviews: reviews.length,
+                    recommended,
+                    notRecommended: reviews.length - recommended,
+                    positive,
+                    negative,
+                    neutral,
+                    avgScore,
+                    recommendedAvg,
+                    notRecommendedAvg,
+                    reviews: reviews.slice(0, 20) // 처음 20개만 표시
+                };
+                
+                // 결과 표시
+                displayResults(data);
+                
+                // 로딩 숨김
+                loadingDiv.style.display = 'none';
+                statusDiv.className = 'status success';
+                statusDiv.textContent = `✅ ${reviews.length}개의 실제 Steam 리뷰 분석이 완료되었습니다!`;
+                statusDiv.style.display = 'block';
+                
+            } catch (error) {
+                console.error('오류:', error);
+                loadingDiv.style.display = 'none';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ 오류: ${error.message}\n\n참고: CORS 제한으로 인해 일부 브라우저에서는 작동하지 않을 수 있습니다. 로컬 Flask 앱(python app.py)을 사용하시면 더 안정적으로 작동합니다.`;
+                statusDiv.style.display = 'block';
+                
+                // 실패 시 샘플 데이터로 폴백
+                const sampleData = generateSampleData(gameName, numReviews);
+                displayResults(sampleData);
+            }
+        }
+
+        // 샘플 데이터 생성
+        function generateSampleData(gameName, numReviews) {
+            const reviews = [];
+            const sentiments = [
+                { text: 'Great game! I love playing this with my friends. The graphics are amazing and the gameplay is smooth.', recommended: true, sentiment: 'positive', score: 0.847, playtime: 150.5 },
+                { text: 'This game is terrible. Too many bugs and the servers are always down. Waste of money.', recommended: false, sentiment: 'negative', score: -0.624, playtime: 5.2 },
+                { text: 'Decent game but needs more content. The mechanics are okay but gets boring after a while.', recommended: true, sentiment: 'neutral', score: 0.102, playtime: 45.0 },
+                { text: 'Amazing experience! Best game I have played in years. Highly recommend to everyone.', recommended: true, sentiment: 'positive', score: 0.921, playtime: 300.0 },
+                { text: 'Not worth the price. The game is broken and the developers dont care about fixing it.', recommended: false, sentiment: 'negative', score: -0.756, playtime: 10.5 },
+                { text: 'Fun game with great mechanics. The community is active and the updates are regular.', recommended: true, sentiment: 'positive', score: 0.654, playtime: 120.0 },
+                { text: 'Average game. Nothing special but not bad either. Worth it if on sale.', recommended: true, sentiment: 'neutral', score: 0.023, playtime: 30.0 },
+                { text: 'Horrible experience. Crashes constantly and the support is non-existent.', recommended: false, sentiment: 'negative', score: -0.812, playtime: 2.5 }
+            ];
+
+            for (let i = 0; i < numReviews; i++) {
+                const template = reviews[i % reviews.length] || sentiments[i % sentiments.length];
+                reviews.push({
+                    ...template,
+                    id: i + 1,
+                    date: new Date(2024, 11, Math.floor(Math.random() * 30) + 1).toISOString().split('T')[0]
+                });
+            }
+
+            // 통계 계산
+            const recommended = reviews.filter(r => r.recommended).length;
+            const positive = reviews.filter(r => r.sentiment === 'positive').length;
+            const negative = reviews.filter(r => r.sentiment === 'negative').length;
+            const neutral = reviews.filter(r => r.sentiment === 'neutral').length;
+            const avgScore = reviews.reduce((sum, r) => sum + r.score, 0) / reviews.length;
+            const recommendedAvg = reviews.filter(r => r.recommended).reduce((sum, r) => sum + r.score, 0) / recommended;
+            const notRecommendedAvg = reviews.filter(r => !r.recommended).reduce((sum, r) => sum + r.score, 0) / (reviews.length - recommended);
+
+            return {
+                gameName,
+                totalReviews: reviews.length,
+                recommended,
+                notRecommended: reviews.length - recommended,
+                positive,
+                negative,
+                neutral,
+                avgScore,
+                recommendedAvg,
+                notRecommendedAvg,
+                reviews: reviews.slice(0, 10) // 샘플만 표시
+            };
+        }
+
+        // 결과 표시
+        function displayResults(data) {
+            // 통계 표시
+            const statsGrid = document.getElementById('stats-grid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <h3>${data.totalReviews}</h3>
+                    <p>전체 리뷰</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${data.recommended}</h3>
+                    <p>추천 리뷰 (${(data.recommended/data.totalReviews*100).toFixed(1)}%)</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${data.notRecommended}</h3>
+                    <p>비추천 리뷰 (${(data.notRecommended/data.totalReviews*100).toFixed(1)}%)</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${data.avgScore.toFixed(3)}</h3>
+                    <p>평균 감정 점수</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${data.recommendedAvg.toFixed(3)}</h3>
+                    <p>추천 리뷰 평균</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${data.notRecommendedAvg.toFixed(3)}</h3>
+                    <p>비추천 리뷰 평균</p>
+                </div>
+            `;
+
+            // 시각화 생성
+            createVisualizations(data);
+
+            // 데이터 테이블 표시
+            displayDataTable(data.reviews);
+
+            // 섹션 표시
+            document.getElementById('results-section').style.display = 'block';
+            document.getElementById('visualization-section').style.display = 'block';
+            document.getElementById('data-section').style.display = 'block';
+        }
+
+        // 시각화 생성
+        function createVisualizations(data) {
+            const grid = document.getElementById('visualization-grid');
+            grid.innerHTML = ''; // 기존 시각화 제거
+            
+            // 추천 분포
+            const recommendationDiv = document.createElement('div');
+            recommendationDiv.className = 'vis-card';
+            recommendationDiv.innerHTML = '<h4>추천 분포</h4><div id="rec-chart" style="height: 300px;"></div>';
+            grid.appendChild(recommendationDiv);
+            
+            Plotly.newPlot('rec-chart', [{
+                x: ['추천', '비추천'],
+                y: [data.recommended, data.notRecommended],
+                type: 'bar',
+                marker: { color: ['#2ecc71', '#e74c3c'] }
+            }], {
+                title: '추천 분포',
+                xaxis: { title: '추천 여부' },
+                yaxis: { title: '리뷰 수' }
+            });
+
+            // 감정 분포
+            const sentimentDiv = document.createElement('div');
+            sentimentDiv.className = 'vis-card';
+            sentimentDiv.innerHTML = '<h4>감정 레이블 분포</h4><div id="sent-chart" style="height: 300px;"></div>';
+            grid.appendChild(sentimentDiv);
+            
+            Plotly.newPlot('sent-chart', [{
+                x: ['긍정', '부정', '중립'],
+                y: [data.positive, data.negative, data.neutral],
+                type: 'bar',
+                marker: { color: ['#2ecc71', '#e74c3c', '#f39c12'] }
+            }], {
+                title: '감정 레이블 분포',
+                xaxis: { title: '감정 레이블' },
+                yaxis: { title: '리뷰 수' }
+            });
+
+            // 파이 차트
+            const pieDiv = document.createElement('div');
+            pieDiv.className = 'vis-card';
+            pieDiv.innerHTML = '<h4>감정 분포 (파이 차트)</h4><div id="pie-chart" style="height: 300px;"></div>';
+            grid.appendChild(pieDiv);
+            
+            Plotly.newPlot('pie-chart', [{
+                values: [data.positive, data.negative, data.neutral],
+                labels: ['긍정', '부정', '중립'],
+                type: 'pie',
+                marker: { colors: ['#2ecc71', '#e74c3c', '#f39c12'] }
+            }], {
+                title: '감정 분포'
+            });
+
+            // 박스 플롯 (실제 데이터 사용)
+            if (data.reviews && data.reviews.length > 0) {
+                const boxDiv = document.createElement('div');
+                boxDiv.className = 'vis-card';
+                boxDiv.innerHTML = '<h4>추천 여부별 감정 점수</h4><div id="box-chart" style="height: 300px;"></div>';
+                grid.appendChild(boxDiv);
+                
+                const recommendedScores = data.reviews.filter(r => r.recommended).map(r => r.score);
+                const notRecommendedScores = data.reviews.filter(r => !r.recommended).map(r => r.score);
+                
+                if (recommendedScores.length > 0 || notRecommendedScores.length > 0) {
+                    Plotly.newPlot('box-chart', [
+                        { y: recommendedScores.length > 0 ? recommendedScores : [0], type: 'box', name: '추천', marker: { color: '#2ecc71' } },
+                        { y: notRecommendedScores.length > 0 ? notRecommendedScores : [0], type: 'box', name: '비추천', marker: { color: '#e74c3c' } }
+                    ], {
+                        title: '추천 여부별 감정 점수 분포',
+                        yaxis: { title: 'Compound Score' }
+                    });
+                }
+            }
+        }
+
+        // 데이터 테이블 표시
+        function displayDataTable(reviews) {
+            const container = document.getElementById('data-table-container');
+            let html = '<table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">';
+            html += '<thead><tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
+            html += '<th style="padding: 15px; text-align: left;">리뷰 텍스트</th>';
+            html += '<th style="padding: 15px; text-align: left;">추천</th>';
+            html += '<th style="padding: 15px; text-align: left;">감정</th>';
+            html += '<th style="padding: 15px; text-align: left;">감정 점수</th>';
+            html += '<th style="padding: 15px; text-align: left;">플레이 시간</th>';
+            html += '</tr></thead><tbody>';
+            
+            reviews.forEach(review => {
+                const sentimentClass = review.sentiment === 'positive' ? 'sentiment-positive' : 
+                                      review.sentiment === 'negative' ? 'sentiment-negative' : 'sentiment-neutral';
+                const sentimentLabel = review.sentiment === 'positive' ? '긍정' : 
+                                     review.sentiment === 'negative' ? '부정' : '중립';
+                html += `<tr style="border-bottom: 1px solid #eee;">`;
+                html += `<td style="padding: 12px 15px;">${review.text}</td>`;
+                html += `<td style="padding: 12px 15px; color: ${review.recommended ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">${review.recommended ? '✓ 추천' : '✗ 비추천'}</td>`;
+                html += `<td style="padding: 12px 15px;"><span class="sentiment-badge ${sentimentClass}">${sentimentLabel}</span></td>`;
+                html += `<td style="padding: 12px 15px;">${review.score.toFixed(3)}</td>`;
+                html += `<td style="padding: 12px 15px;">${review.playtime}시간</td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Enter 키로 검색
+        document.getElementById('game_search').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchGame();
+            }
+        });
     </script>
 </body>
 </html>
-
