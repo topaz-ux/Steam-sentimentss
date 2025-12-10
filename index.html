@@ -278,23 +278,24 @@
         }
 
         .game-search {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 15px;
-            margin-bottom: 15px;
+            display: block;
             width: 100%;
+            margin-bottom: 15px;
         }
 
         .game-search input {
-            width: 100% !important;
+            display: block;
+            width: 100%;
             padding: 20px;
             font-size: 18px;
             min-height: 60px;
             box-sizing: border-box;
+            margin-bottom: 15px;
         }
 
         .game-search button {
-            width: 100% !important;
+            display: block;
+            width: 100%;
             padding: 20px 30px;
             white-space: nowrap;
             font-size: 18px;
@@ -475,10 +476,9 @@
 
         <!-- CORS 경고 (동적 표시) -->
         <div id="cors-warning" class="cors-warning">
-            <strong>⚠️ CORS 제한 감지:</strong> 브라우저의 CORS 정책으로 인해 Steam API 호출이 차단되었습니다.<br>
-            <strong>해결 방법:</strong> 로컬에서 Flask 앱을 실행하세요:
-            <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto;"><code>python app.py</code></pre>
-            그 후 <code>http://localhost:5000</code>으로 접속하시면 정상적으로 작동합니다.
+            <strong>⚠️ CORS 제한 감지:</strong> 브라우저의 CORS 정책으로 인해 Steam API 호출이 차단되었습니다.<br><br>
+            <strong>해결 방법:</strong> 로컬에서 Flask 앱을 실행하세요. 터미널에서 다음 명령어를 실행한 후 <code>http://localhost:5000</code>으로 접속하시면 정상적으로 작동합니다.<br>
+            <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; font-size: 14px; line-height: 1.5;"><code>python app.py</code></pre>
         </div>
 
         <!-- 안내 섹션 -->
@@ -489,17 +489,15 @@
             </div>
             
             <div class="warning-box">
-                <strong>⚠️ CORS 제한:</strong> 일부 브라우저에서는 CORS 정책으로 인해 작동하지 않을 수 있습니다.<br>
-                <strong>해결 방법:</strong> 이 경우 로컬에서 <code>python app.py</code>를 실행하세요. 
-                터미널에서 다음 명령어를 실행한 후 <code>http://localhost:5000</code>으로 접속하시면 됩니다.
-                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd;"><code>python app.py</code></pre>
+                <strong>⚠️ CORS 제한:</strong> 일부 브라우저에서는 CORS 정책으로 인해 작동하지 않을 수 있습니다.<br><br>
+                <strong>해결 방법:</strong> 이 경우 로컬에서 <code>python app.py</code>를 실행하세요. 터미널에서 다음 명령어를 실행한 후 <code>http://localhost:5000</code>으로 접속하시면 됩니다.<br>
+                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd; font-size: 14px; line-height: 1.5;"><code>python app.py</code></pre>
             </div>
             
             <div class="warning-box">
-                <strong>📊 감정 분석:</strong> 현재 클라이언트 사이드에서 간단한 감정 분석 알고리즘을 사용합니다.<br>
-                <strong>더 정확한 분석:</strong> 더 정확한 분석을 원하시면 로컬 Flask 앱을 사용하세요. 
-                Flask 앱은 서버 사이드에서 NLTK VADER를 사용하여 더 정확한 감정 분석을 수행합니다.
-                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd;"><code>python app.py</code></pre>
+                <strong>📊 감정 분석:</strong> 현재 클라이언트 사이드에서 간단한 감정 분석 알고리즘을 사용합니다.<br><br>
+                <strong>더 정확한 분석:</strong> 더 정확한 분석을 원하시면 로컬 Flask 앱을 사용하세요. Flask 앱은 서버 사이드에서 NLTK VADER를 사용하여 더 정확한 감정 분석을 수행합니다.<br>
+                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd; font-size: 14px; line-height: 1.5;"><code>python app.py</code></pre>
             </div>
         </div>
     </div>
