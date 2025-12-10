@@ -17,15 +17,38 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .game-search {
+                flex-direction: column;
+            }
+            
+            .game-search button {
+                width: 100%;
+            }
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             padding: 40px;
+            width: 95%;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -69,11 +92,16 @@
 
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 18px;
             border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 18px;
             transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"], input[type="number"] {
+            min-height: 50px;
         }
 
         input:focus, select:focus {
@@ -213,13 +241,48 @@
         .info-box {
             background: #e7f3ff;
             border-left: 4px solid #2196F3;
-            padding: 15px;
+            padding: 20px;
             margin: 20px 0;
             border-radius: 5px;
+            font-size: 16px;
+            line-height: 1.6;
         }
 
         .info-box strong {
             color: #1976D2;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .warning-box strong {
+            color: #856404;
+        }
+        
+        .cors-warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-size: 16px;
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .cors-warning strong {
+            color: #721c24;
+        }
+        
+        .cors-warning.show {
+            display: block;
         }
 
         .game-search {
@@ -230,11 +293,16 @@
 
         .game-search input {
             flex: 1;
+            padding: 20px;
+            font-size: 18px;
+            min-height: 60px;
         }
 
         .game-search button {
-            padding: 12px 20px;
+            padding: 20px 30px;
             white-space: nowrap;
+            font-size: 18px;
+            min-height: 60px;
         }
 
         .popular-games {
@@ -408,13 +476,33 @@
             <div id="data-table-container"></div>
         </div>
 
+        <!-- CORS 경고 (동적 표시) -->
+        <div id="cors-warning" class="cors-warning">
+            <strong>⚠️ CORS 제한 감지:</strong> 브라우저의 CORS 정책으로 인해 Steam API 호출이 차단되었습니다.<br>
+            <strong>해결 방법:</strong> 로컬에서 Flask 앱을 실행하세요:
+            <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto;"><code>python app.py</code></pre>
+            그 후 <code>http://localhost:5000</code>으로 접속하시면 정상적으로 작동합니다.
+        </div>
+
         <!-- 안내 섹션 -->
         <div class="section">
             <h2>ℹ️ 사용 안내</h2>
             <div class="info-box">
-                <strong>실제 서비스:</strong> 이 페이지는 실제 Steam API를 호출하여 리뷰를 가져옵니다.<br>
-                <strong>CORS 제한:</strong> 일부 브라우저에서는 CORS 정책으로 인해 작동하지 않을 수 있습니다. 이 경우 로컬에서 <code>python app.py</code>를 실행하세요.<br>
-                <strong>감정 분석:</strong> 클라이언트 사이드에서 간단한 감정 분석 알고리즘을 사용합니다. 더 정확한 분석을 원하시면 로컬 Flask 앱을 사용하세요.
+                <strong>실제 서비스:</strong> 이 페이지는 실제 Steam API를 호출하여 리뷰를 가져옵니다.
+            </div>
+            
+            <div class="warning-box">
+                <strong>⚠️ CORS 제한:</strong> 일부 브라우저에서는 CORS 정책으로 인해 작동하지 않을 수 있습니다.<br>
+                <strong>해결 방법:</strong> 이 경우 로컬에서 <code>python app.py</code>를 실행하세요. 
+                터미널에서 다음 명령어를 실행한 후 <code>http://localhost:5000</code>으로 접속하시면 됩니다.
+                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd;"><code>python app.py</code></pre>
+            </div>
+            
+            <div class="warning-box">
+                <strong>📊 감정 분석:</strong> 현재 클라이언트 사이드에서 간단한 감정 분석 알고리즘을 사용합니다.<br>
+                <strong>더 정확한 분석:</strong> 더 정확한 분석을 원하시면 로컬 Flask 앱을 사용하세요. 
+                Flask 앱은 서버 사이드에서 NLTK VADER를 사용하여 더 정확한 감정 분석을 수행합니다.
+                <pre style="background: #fff; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; border: 1px solid #ddd;"><code>python app.py</code></pre>
             </div>
         </div>
     </div>
@@ -618,11 +706,22 @@
             }
         }
 
+        // CORS 경고 표시 함수
+        function showCorsWarning() {
+            const corsWarning = document.getElementById('cors-warning');
+            if (corsWarning) {
+                corsWarning.classList.add('show');
+                // 페이지 상단으로 스크롤
+                corsWarning.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
         // Steam API에서 리뷰 가져오기
         async function fetchSteamReviews(gameId, numReviews) {
             const reviews = [];
             let cursor = '*';
             const maxPages = Math.ceil(numReviews / 100) + 1;
+            let corsErrorDetected = false;
             
             for (let page = 0; page < maxPages && reviews.length < numReviews; page++) {
                 try {
@@ -637,6 +736,7 @@
                     
                     let response = null;
                     let data = null;
+                    let corsError = false;
                     
                     // 직접 호출 시도
                     try {
@@ -652,11 +752,17 @@
                             data = await response.json();
                         }
                     } catch (e) {
+                        // CORS 오류 감지
+                        if (e.name === 'TypeError' && (e.message.includes('Failed to fetch') || e.message.includes('CORS'))) {
+                            corsError = true;
+                            corsErrorDetected = true;
+                        }
                         console.log('직접 호출 실패, 프록시 시도:', e);
                     }
                     
                     // 프록시 사용
                     if (!data) {
+                        let proxySuccess = false;
                         for (const proxy of proxies) {
                             try {
                                 const proxyUrl = proxy + encodeURIComponent(url);
@@ -670,12 +776,18 @@
                                 if (response.ok) {
                                     const text = await response.text();
                                     data = JSON.parse(text);
+                                    proxySuccess = true;
                                     break;
                                 }
                             } catch (e) {
                                 console.log(`프록시 ${proxy} 실패:`, e);
                                 continue;
                             }
+                        }
+                        
+                        // 모든 프록시가 실패한 경우 CORS 오류로 간주
+                        if (!proxySuccess && !corsError) {
+                            corsErrorDetected = true;
                         }
                     }
                     
@@ -712,8 +824,17 @@
                     
                 } catch (error) {
                     console.error(`페이지 ${page + 1} 오류:`, error);
+                    // CORS 오류인지 확인
+                    if (error.name === 'TypeError' && (error.message.includes('Failed to fetch') || error.message.includes('CORS'))) {
+                        corsErrorDetected = true;
+                    }
                     break;
                 }
+            }
+            
+            // CORS 오류가 감지되었고 리뷰를 가져오지 못한 경우 경고 표시
+            if (corsErrorDetected && reviews.length === 0) {
+                showCorsWarning();
             }
             
             return reviews;
@@ -855,7 +976,20 @@
                 console.error('오류:', error);
                 loadingDiv.style.display = 'none';
                 statusDiv.className = 'status error';
-                statusDiv.textContent = `❌ 오류: ${error.message}\n\n참고: CORS 제한으로 인해 일부 브라우저에서는 작동하지 않을 수 있습니다. 로컬 Flask 앱(python app.py)을 사용하시면 더 안정적으로 작동합니다.`;
+                
+                // CORS 오류인지 확인
+                const isCorsError = error.message.includes('Failed to fetch') || 
+                                   error.message.includes('CORS') || 
+                                   error.message.includes('NetworkError') ||
+                                   (error.name === 'TypeError' && error.message.includes('fetch'));
+                
+                if (isCorsError) {
+                    statusDiv.textContent = `❌ CORS 오류: 브라우저의 CORS 정책으로 인해 Steam API를 호출할 수 없습니다.\n\n해결 방법: 로컬 Flask 앱(python app.py)을 실행하세요.`;
+                    showCorsWarning();
+                } else {
+                    statusDiv.textContent = `❌ 오류: ${error.message}\n\n참고: CORS 제한으로 인해 일부 브라우저에서는 작동하지 않을 수 있습니다. 로컬 Flask 앱(python app.py)을 사용하시면 더 안정적으로 작동합니다.`;
+                }
+                
                 statusDiv.style.display = 'block';
                 
                 // 실패 시 샘플 데이터로 폴백
