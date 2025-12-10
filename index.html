@@ -1095,7 +1095,7 @@
             const grid = document.getElementById('visualization-grid');
             grid.innerHTML = ''; // 기존 시각화 제거
             
-            // 추천 분포
+            // 1. 추천 분포 (위)
             const recommendationDiv = document.createElement('div');
             recommendationDiv.className = 'vis-card';
             recommendationDiv.innerHTML = '<h4>추천 분포</h4><div id="rec-chart" style="height: 300px;"></div>';
@@ -1112,7 +1112,7 @@
                 yaxis: { title: '리뷰 수' }
             });
 
-            // 감정 분포
+            // 2. 감정 레이블 분포 (위)
             const sentimentDiv = document.createElement('div');
             sentimentDiv.className = 'vis-card';
             sentimentDiv.innerHTML = '<h4>감정 레이블 분포</h4><div id="sent-chart" style="height: 300px;"></div>';
@@ -1129,7 +1129,7 @@
                 yaxis: { title: '리뷰 수' }
             });
 
-            // 파이 차트
+            // 3. 파이 차트 (아래)
             const pieDiv = document.createElement('div');
             pieDiv.className = 'vis-card';
             pieDiv.innerHTML = '<h4>감정 분포 (파이 차트)</h4><div id="pie-chart" style="height: 300px;"></div>';
@@ -1144,7 +1144,7 @@
                 title: '감정 분포'
             });
 
-            // 박스 플롯 (실제 데이터 사용)
+            // 4. 박스 플롯 - 추천 여부별 감정 점수 (아래)
             if (data.reviews && data.reviews.length > 0) {
                 const boxDiv = document.createElement('div');
                 boxDiv.className = 'vis-card';
